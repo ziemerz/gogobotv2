@@ -11,20 +11,19 @@ type Dispatcher struct {
 	bot *Bot
 }
 
-func RunDispatcher(inc, out chan *Message, bot *Bot) *Dispatcher {
+func RunDispatcher(inc, out chan *Message, bot *Bot) {
 	disp := new(Dispatcher)
 	disp.outgoing = out
 	disp.incoming = inc
 	disp.bot = bot
 	go disp.dispatch()
-
-	return disp
 }
 
 func (disp *Dispatcher) dispatch(){
-	msg := <-disp.incoming
-	msg.content = strings.Split(msg.content, " ")[1]
-	disp.bot.commands[msg.content].Fire(msg, disp.outgoing)
-	fmt.Println("Message handled, returning")
-	<-disp.incoming
+	for msg := range disp.incoming {
+		//msg := <-disp.incoming
+		msg.content = strings.Split(msg.content, " ")[1]
+		disp.bot.commands[msg.content].Fire(msg, disp.outgoing)
+		fmt.Println("Message handled, returning")
+	}
 }

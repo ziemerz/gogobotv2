@@ -46,9 +46,9 @@ func (d *Discord) Open() {
 }
 
 func (d *Discord) Send() {
-	msg := <-d.outgoing
-	d.session.ChannelMessageSend(msg.channel, msg.content)
-	<-d.outgoing
+	for msg := range d.outgoing {
+		d.session.ChannelMessageSend(msg.channel, msg.content)
+	}
 }
 
 func (d *Discord) receive(m *Message) {
