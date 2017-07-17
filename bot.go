@@ -9,9 +9,10 @@ type Bot struct {
 func NewBot(key string) *Bot {
 	bot := new(Bot)
 	testCmd := NewTestCommand()
+	timerCmd := NewTimerCommand()
 	bot.commands = make(map[string]Command)
 	bot.commands[testCmd.Name()] = testCmd
-
+	bot.commands[timerCmd.Name()] = timerCmd
 	discord := NewDiscord(key, bot)
 	discord.Open()
 	return bot

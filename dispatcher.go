@@ -2,7 +2,6 @@ package main
 
 import (
 	"strings"
-	"fmt"
 )
 
 type Dispatcher struct {
@@ -21,9 +20,12 @@ func RunDispatcher(inc, out chan *Message, bot *Bot) {
 
 func (disp *Dispatcher) dispatch(){
 	for msg := range disp.incoming {
-		//msg := <-disp.incoming
-		msg.content = strings.Split(msg.content, " ")[1]
-		disp.bot.commands[msg.content].Fire(msg, disp.outgoing)
-		fmt.Println("Message handled, returning")
+
+		// Get the command of the message.
+		cmd := strings.Split(msg.content, " ")[1]
+
+		// Dispatch to the correct command and let it handle the rest
+		// Done in a goroutine to prevent blocking
+		go disp.bot.commands[cmd].Fire(msg, disp.outgoing)
 	}
 }
