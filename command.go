@@ -1,8 +1,4 @@
-package main
-
-import (
-	. "github.com/ziemerz/gogobotv2/gogotypes"
-)
+package gogobotv2
 
 // CommandEntry struct implements the Command interface
 type CommandEntry struct {

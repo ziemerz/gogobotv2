@@ -1,11 +1,10 @@
-package main
+package gogobotv2
 
 import (
 	"github.com/iopred/discordgo"
 	"log"
 	"fmt"
 	"strings"
-	. "github.com/ziemerz/gogobotv2/gogotypes"
 )
 var name string = "discord.go:: "
 
@@ -26,7 +25,6 @@ func NewDiscord(key string, bot *Bot) *Discord{
 	disc.session, err = discordgo.New("Bot " + key)
 
 	disc.bot = bot
-
 	disc.session.AddHandler(disc.MessageCreate)
 	if err != nil {
 		log.Fatal(name + "Couldn't create discord session :(")

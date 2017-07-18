@@ -1,8 +1,7 @@
-package main
+package gogobotv2
 
 import (
 	"strings"
-	. "github.com/ziemerz/gogobotv2/gogotypes"
 )
 
 type Dispatcher struct {

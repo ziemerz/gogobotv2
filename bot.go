@@ -1,8 +1,6 @@
-package main
+package gogobotv2
 
 import (
-	"github.com/ziemerz/gogobotv2/commands"
-	. "github.com/ziemerz/gogobotv2/gogotypes"
 )
 
 type Bot struct {
@@ -15,8 +13,8 @@ type Bot struct {
 // It will also make sure to open up the Discord connection
 func NewBot(key string) *Bot {
 	bot := new(Bot)
-	testCmd := commands.NewTestCommand()
-	timerCmd := commands.NewTimerCommand()
+	testCmd := NewTestCommand()
+	timerCmd := NewTimerCommand()
 	bot.commands = make(map[string]Command)
 	bot.commands[testCmd.Name()] = testCmd
 	bot.commands[timerCmd.Name()] = timerCmd

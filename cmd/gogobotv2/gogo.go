@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"github.com/ziemerz/gogobotv2"
 )
 
 func init(){
@@ -22,7 +23,7 @@ func main() {
 	}
 	fmt.Println(key)
 
-	bot := NewBot(key)
+	bot := gogobotv2.NewBot(key)
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
