@@ -1,6 +1,7 @@
-package main
+package commands
 
 import (
+	. "github.com/ziemerz/gogobotv2/gogotypes"
 )
 
 type TestCommand struct {
@@ -21,8 +22,8 @@ func (tc *TestCommand) AddChannel(msgChan chan *Message) {
 
 func (tc *TestCommand) Fire(msg *Message, out chan *Message) {
 	m := Message{
-		content: "Hejsa mate",
-		channel: msg.channel,
+		Content: "Hejsa mate",
+		Channel: msg.Channel,
 	}
 
 	out <- &m

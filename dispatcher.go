@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+	. "github.com/ziemerz/gogobotv2/gogotypes"
 )
 
 type Dispatcher struct {
@@ -22,7 +23,7 @@ func (disp *Dispatcher) dispatch(){
 	for msg := range disp.incoming {
 
 		// Get the command of the message.
-		cmd := strings.Split(msg.content, " ")[1]
+		cmd := strings.Split(msg.Content, " ")[1]
 
 		// Dispatch to the correct command and let it handle the rest
 		// Done in a goroutine to prevent blocking

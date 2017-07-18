@@ -1,8 +1,9 @@
-package main
+package commands
 
 import (
 	"time"
 	"fmt"
+	. "github.com/ziemerz/gogobotv2/gogotypes"
 )
 
 type TimerCommand struct {
@@ -29,14 +30,14 @@ func (tc *TimerCommand) AddChannel(msgChan chan *Message) {
 
 func (tc *TimerCommand) Fire(msg *Message, out chan *Message) {
 
-	if tc.channelIDs[msg.channel] == nil {
-		tc.channelIDs[msg.channel] = tc.startTimer
-		go tc.channelIDs[msg.channel].(func(string, chan *Message))(msg.channel, out)
+	if tc.channelIDs[msg.Channel] == nil {
+		tc.channelIDs[msg.Channel] = tc.startTimer
+		go tc.channelIDs[msg.Channel].(func(string, chan *Message))(msg.Channel, out)
 	} else {
 		fmt.Println("Putting in stop signal")
 		tc.signal <- "stop"
-		tc.channelIDs[msg.channel] = tc.startTimer
-		go tc.channelIDs[msg.channel].(func(string, chan *Message))(msg.channel, out)
+		tc.channelIDs[msg.Channel] = tc.startTimer
+		go tc.channelIDs[msg.Channel].(func(string, chan *Message))(msg.Channel, out)
 	}
 }
 
@@ -61,18 +62,18 @@ func (tc *TimerCommand)startTimer(channel string, out chan *Message) {
 
 			case <- notif1chan:
 				out <- &Message{
-					content: "30 minutes remaining",
-					channel: channel,
+					Content: "30 minutes remaining",
+					Channel: channel,
 				}
 			case <- notif15chan:
 				out <- &Message{
-					content: "15 minutes remaining",
-					channel: channel,
+					Content: "15 minutes remaining",
+					Channel: channel,
 				}
 			case <- upchan:
 				out <- &Message{
-					content: "Time's up",
-					channel: channel,
+					Content: "Time's up",
+					Channel: channel,
 				}
 				donechan <- true
 			}
