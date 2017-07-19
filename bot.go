@@ -1,6 +1,7 @@
 package gogobotv2
 
 import (
+	"errors"
 )
 
 type Bot struct {
@@ -13,17 +14,27 @@ type Bot struct {
 // It will also make sure to open up the Discord connection
 func NewBot(key string) *Bot {
 	bot := new(Bot)
-	testCmd := NewTestCommand()
-	timerCmd := NewTimerCommand()
 	bot.commands = make(map[string]Command)
-	bot.commands[testCmd.Name()] = testCmd
-	bot.commands[timerCmd.Name()] = timerCmd
 	discord := NewDiscord(key, bot)
-	discord.Open()
+	bot.discord = discord
 	return bot
+}
+
+//Start opens the Discord session
+func (b *Bot) Start() {
+	b.discord.Open()
 }
 
 // Close closes the Discord session
 func (b *Bot) Close() {
 	b.discord.session.Close()
+}
+
+// AddCommand if the passed command does not already exist, register it.
+func (b *Bot) AddCommand(cmd Command) error {
+	if b.commands[cmd.Name()] == nil {
+		b.commands[cmd.Name()] = cmd
+		return nil
+	}
+	return errors.New("Command already registered")
 }
