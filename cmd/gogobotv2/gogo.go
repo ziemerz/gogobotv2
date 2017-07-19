@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 	"github.com/ziemerz/gogobotv2"
+	. "github.com/ziemerz/gogobotv2/commands"
 )
 
 func init(){
@@ -26,8 +27,8 @@ func main() {
 	bot := gogobotv2.NewBot(key)
 
 	// Set state of bot and start the bot
-	testCmd := gogobotv2.NewTestCommand()
-	timerCmd := gogobotv2.NewTimerCommand()
+	testCmd := NewTestCommand()
+	timerCmd := NewTimerCommand()
 	bot.AddCommand(testCmd)
 	bot.AddCommand(timerCmd)
 	bot.Start()
