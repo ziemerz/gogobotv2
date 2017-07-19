@@ -1,8 +1,9 @@
-package gogobotv2
+package commands
 
 import (
 	"time"
 	"fmt"
+	. "github.com/ziemerz/gogobotv2"
 )
 
 type TimerCommand struct {

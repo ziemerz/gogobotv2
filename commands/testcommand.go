@@ -1,6 +1,7 @@
-package gogobotv2
+package commands
 
 import (
+	. "github.com/ziemerz/gogobotv2"
 )
 
 type TestCommand struct {
