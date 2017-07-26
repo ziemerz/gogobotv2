@@ -37,9 +37,14 @@ func (tc *TimerCommand) Fire(msg *Message, out chan *Message) {
 
 	command := strings.Split(msg.Content, " ")
 
-	if subcmd := command[2]; len(command) > 2 {
+	if len(command) > 2 {
+		subcmd := command[2];
 		if subcmd ==  "in" {
 			tc.in(timer, command[3])
+		}
+
+		if subcmd == "stop" {
+			tc.stop(msg.Channel)
 		}
 	}
 }
@@ -66,12 +71,13 @@ type TimerEntry struct {
 
 func (t *TimerEntry) Start() {
 
+	fmt.Println("Starting timer")
 	//ttime := (time.Hour * t.hour) + (time.Minute * t.minute) + (time.Second * t.second)
-	totalTime := time.Second * 30
-	notif15 := totalTime - (time.Second * 5)
-	notif30 := totalTime - (time.Second * 25)
-	notif15chan := time.NewTimer(notif15).C
-	notif1chan := time.NewTimer(notif30).C
+	totalTime := t.duration
+	notif2 := totalTime - (time.Second * 5)
+	notif1 := totalTime - (time.Second * 30)
+	notif2chan := time.NewTimer(notif2).C
+	notif1chan := time.NewTimer(notif1).C
 	upchan := time.NewTimer(totalTime).C
 
 	donechan := make(chan bool)
@@ -85,10 +91,10 @@ func (t *TimerEntry) Start() {
 
 			case <- notif1chan:
 				t.out <- &Message{
-					Content: "30 minutes remaining",
+					Content: "1 hour remaining",
 					Channel: t.channel,
 				}
-			case <- notif15chan:
+			case <- notif2chan:
 				t.out <- &Message{
 					Content: "15 minutes remaining",
 					Channel: t.channel,
@@ -104,10 +110,12 @@ func (t *TimerEntry) Start() {
 		}
 	}()
 	<- donechan
+	fmt.Println("Timer done/stopped")
 }
 
 func (tc *TimerCommand) in(timer *TimerEntry, duration string) {
 
+	fmt.Println("In called")
 	split := strings.Split(duration, ":")
 	var h, m, s time.Duration
 	var hi, mi, si int
@@ -134,13 +142,25 @@ func (tc *TimerCommand) in(timer *TimerEntry, duration string) {
 	timer.duration = (time.Hour * h) + (time.Minute * m) + (time.Second * s)
 
 	if tc.channelIDs[timer.channel] == nil {
+		fmt.Println("If channel in list is nil")
 		tc.channelIDs[timer.channel] = timer
 		go tc.startTimer(tc.channelIDs[timer.channel])
 	} else {
+		fmt.Println("If channel in list is != nil")
 		tc.channelIDs[timer.channel].signal <- true
 		tc.channelIDs[timer.channel] = nil
 		tc.channelIDs[timer.channel] = timer
 		go tc.startTimer(tc.channelIDs[timer.channel])
+	}
+	fmt.Println("In done")
+}
+
+func (tc *TimerCommand) stop(channel string) {
+	t := tc.channelIDs[channel]
+	if t != nil {
+		t.signal <- true
+		tc.channelIDs[channel] = nil
+		fmt.Println("Stopped")
 	}
 }
 
