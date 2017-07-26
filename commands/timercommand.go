@@ -66,13 +66,13 @@ type TimerEntry struct {
 	out chan *Message
 	signal chan bool
 	duration time.Duration
+	ticker *time.Ticker
 }
 
 
 func (t *TimerEntry) Start() {
 
 	fmt.Println("Starting timer")
-	//ttime := (time.Hour * t.hour) + (time.Minute * t.minute) + (time.Second * t.second)
 	totalTime := t.duration
 	notif2 := totalTime - (time.Second * 5)
 	notif1 := totalTime - (time.Second * 30)
@@ -104,6 +104,7 @@ func (t *TimerEntry) Start() {
 					Content: "Time's up",
 					Channel: t.channel,
 				}
+				t.roundNotice()
 				donechan <- true
 				return
 			}
@@ -162,5 +163,26 @@ func (tc *TimerCommand) stop(channel string) {
 		tc.channelIDs[channel] = nil
 		fmt.Println("Stopped")
 	}
+}
+
+func (t *TimerEntry) roundNotice() {
+	t.ticker = time.NewTicker(time.Second * 3)
+	ch := t.ticker.C
+
+	go func() {
+		round := 2
+		for {
+			select {
+				case <- ch:
+					t.out <- &Message {
+						Content: "Get ready for round " + strconv.Itoa(round),
+						Channel: t.channel,
+					}
+					round++
+				case <- t.signal:
+					return
+			}
+		}
+	}()
 }
 
