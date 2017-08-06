@@ -67,15 +67,15 @@ type TimerEntry struct {
 	signal chan bool
 	duration time.Duration
 	ticker *time.Ticker
+
 }
 
-
 func (t *TimerEntry) Start() {
-
 	fmt.Println("Starting timer")
 	totalTime := t.duration
-	notif2 := totalTime - (time.Second * 5)
-	notif1 := totalTime - (time.Second * 30)
+
+	notif2 := totalTime - (time.Minute * 15)
+	notif1 := totalTime - time.Hour
 	notif2chan := time.NewTimer(notif2).C
 	notif1chan := time.NewTimer(notif1).C
 	upchan := time.NewTimer(totalTime).C
@@ -88,16 +88,19 @@ func (t *TimerEntry) Start() {
 			case <-t.signal:
 				donechan <- true
 				return
-
 			case <- notif1chan:
-				t.out <- &Message{
-					Content: "1 hour remaining",
-					Channel: t.channel,
+				if t.duration > time.Hour {
+					t.out <- &Message{
+						Content: "1 hour remaining",
+						Channel: t.channel,
+					}
 				}
 			case <- notif2chan:
-				t.out <- &Message{
-					Content: "15 minutes remaining",
-					Channel: t.channel,
+				if t.duration > time.Minute * 15 {
+					t.out <- &Message{
+						Content: "15 minutes remaining",
+						Channel: t.channel,
+					}
 				}
 			case <- upchan:
 				t.out <- &Message{
@@ -109,6 +112,10 @@ func (t *TimerEntry) Start() {
 				return
 			}
 		}
+	}()
+
+	go func() {
+
 	}()
 	<- donechan
 	fmt.Println("Timer done/stopped")
@@ -166,7 +173,7 @@ func (tc *TimerCommand) stop(channel string) {
 }
 
 func (t *TimerEntry) roundNotice() {
-	t.ticker = time.NewTicker(time.Second * 3)
+	t.ticker = time.NewTicker(time.Hour)
 	ch := t.ticker.C
 
 	go func() {
