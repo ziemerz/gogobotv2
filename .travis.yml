@@ -10,3 +10,10 @@ before_install:
 
 script:
   - ginkgo -r --randomizeAllSpecs --randomizeSuites --failOnPending --cover --trace --race --compilers=2
+
+notifications:
+  email:
+    recipients:
+      - mzhjensen@gmail.com
+    on_success: never
+    on_failure: always
